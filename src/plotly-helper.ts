@@ -13,8 +13,11 @@ const plotlyFilepath = `${__dirname}/../node_modules/plotly.js/dist/plotly.min.j
  * request
  */
 export async function loadPlotly(): Promise<any> {
-    const virtual_console = new jsdom.VirtualConsole();
-    virtual_console.sendTo(console);
+    // Can't get the newer version of the jsdom @types compiling, so use old version which used to only have sendTo
+    // instead of forwardTo, and just cast it to any so we can call it (using the newer actual jsdom package version
+    // with forwardTo support)
+    const virtual_console: any = new jsdom.VirtualConsole();
+    virtual_console.forwardTo(console);
     const jsdomWindow = new jsdom.JSDOM('', {runScripts : 'dangerously', virtualConsole : virtual_console}).window;
 
     // Stub two functions that plotly calls (but doesn't really need) that aren't provided by jsdom
